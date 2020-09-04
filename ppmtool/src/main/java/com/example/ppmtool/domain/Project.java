@@ -23,6 +23,7 @@ public class Project {
 
     @NotBlank(message = "Project identifier is required")
     @Size(min = 6, max = 8, message = "Identifier length should be between 6 and 8")
+    @Column(updatable = false, unique = true)
     private String projectIdentifier;
     @NotBlank(message = "Project Description is required")
     @Size(min = 10, max = 256, message = "Description length should be between 10 and 256 characters")
@@ -61,6 +62,14 @@ public class Project {
 
     public void setProjectIdentifier(String projectIdentifier) {
         this.projectIdentifier = projectIdentifier;
+    }
+
+    public String getProjectDescription() {
+        return projectDescription;
+    }
+
+    public void setProjectDescription(String projectDescription) {
+        this.projectDescription = projectDescription;
     }
 
     public Date getStartDate() {
