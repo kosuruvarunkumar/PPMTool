@@ -1,20 +1,29 @@
+/** @format */
+
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import { deleteProjectById } from "../../actions/projectActions";
+import { connect } from "react-redux";
+import propTypes from "prop-types";
 
 class ProjectItem extends Component {
+    onDelete = (id) => {
+        this.props.deleteProjectById(id);
+    };
     render() {
+        const { project } = this.props;
         return (
             <div className="container">
                 <div className="card card-body bg-light mb-3">
                     <div className="row">
                         <div className="col-2">
-                            <span className="mx-auto">REACT</span>
+                            <span className="mx-auto">
+                                {project.projectIdentifier}
+                            </span>
                         </div>
                         <div className="col-lg-6 col-md-4 col-8">
-                            <h3>Spring / React Project</h3>
-                            <p>
-                                Project to create a Kanban Board with Spring
-                                Boot and React
-                            </p>
+                            <h3>{project.projectName}</h3>
+                            <p>{project.projectDescription}</p>
                         </div>
                         <div className="col-md-4 d-none d-lg-block">
                             <ul className="list-group">
@@ -25,20 +34,26 @@ class ProjectItem extends Component {
                                         </i>
                                     </li>
                                 </a>
-                                <a href="#">
+                                <Link
+                                    to={`/updateProject/${project.projectIdentifier}`}
+                                >
                                     <li className="list-group-item update">
                                         <i className="fa fa-edit pr-1">
                                             Update Project Info
                                         </i>
                                     </li>
-                                </a>
-                                <a href="">
-                                    <li className="list-group-item delete">
-                                        <i className="fa fa-minus-circle pr-1">
-                                            Delete Project
-                                        </i>
-                                    </li>
-                                </a>
+                                </Link>
+                                <li
+                                    className="list-group-item delete"
+                                    onClick={this.onDelete.bind(
+                                        this,
+                                        project.projectIdentifier
+                                    )}
+                                >
+                                    <i className="fa fa-minus-circle pr-1">
+                                        Delete Project
+                                    </i>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -48,4 +63,8 @@ class ProjectItem extends Component {
     }
 }
 
-export default ProjectItem;
+ProjectItem.propTypes = {
+    deleteProjectById: propTypes.func.isRequired,
+};
+
+export default connect(null, { deleteProjectById })(ProjectItem);

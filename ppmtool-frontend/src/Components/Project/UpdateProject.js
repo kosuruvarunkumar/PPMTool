@@ -1,15 +1,16 @@
 /** @format */
 
 import React, { Component } from "react";
-import PropTypes from "prop-types";
+import { getProjectById, createProject } from "../../actions/projectActions";
+import propTypes from "prop-types";
 import { connect } from "react-redux";
-import { createProject } from "../../actions/projectActions";
 import classnames from "classnames";
 
-class AddProject extends Component {
+class UpdateProject extends Component {
     constructor() {
         super();
         this.state = {
+            id: "",
             projectName: "",
             projectIdentifier: "",
             projectDescription: "",
@@ -17,31 +18,49 @@ class AddProject extends Component {
             endDate: "",
             errors: {},
         };
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.onChange = this.onChange.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
     }
-
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.errors) {
-            this.setState({
-                errors: nextProps.errors,
-            });
-        }
+    componentDidMount() {
+        const { projectIdentifier } = this.props.match.params;
+        this.props.getProjectById(projectIdentifier, this.props.history);
     }
-
-    handleChange(event) {
+    onChange(event) {
         this.setState({ [event.target.name]: event.target.value });
     }
-    handleSubmit(event) {
+    onSubmit(event) {
         event.preventDefault();
-        const newProject = {
+        const updatedProject = {
+            id: this.state.id,
             projectName: this.state.projectName,
             projectIdentifier: this.state.projectIdentifier,
             projectDescription: this.state.projectDescription,
             startDate: this.state.startDate,
             endDate: this.state.endDate,
         };
-        this.props.createProject(newProject, this.props.history);
+        this.props.createProject(updatedProject, this.props.history);
+    }
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.errors) {
+            this.setState({ errors: nextProps.errors });
+        }
+        const {
+            id,
+            projectName,
+            projectIdentifier,
+            projectDescription,
+            startDate,
+            endDate,
+        } = nextProps.project;
+
+        this.setState({
+            id,
+            projectName,
+            projectIdentifier,
+            projectDescription,
+            startDate,
+            endDate,
+        });
     }
     render() {
         const { errors } = this.state;
@@ -51,15 +70,15 @@ class AddProject extends Component {
                     <div className="row">
                         <div className="col-md-8 m-auto">
                             <h5 className="display-4 text-center">
-                                Create Project form
+                                Update Project
                             </h5>
                             <hr />
-                            <form method="POST" onSubmit={this.handleSubmit}>
+                            <form onSubmit={this.onSubmit}>
                                 <div className="form-group">
                                     <input
                                         type="text"
                                         className={classnames(
-                                            "form-control form-control-lg ",
+                                            "form-control form-control-lg",
                                             {
                                                 "is-invalid":
                                                     errors.projectName,
@@ -68,7 +87,7 @@ class AddProject extends Component {
                                         placeholder="Project Name"
                                         name="projectName"
                                         value={this.state.projectName}
-                                        onChange={this.handleChange}
+                                        onChange={this.onChange}
                                     />
                                     {errors.projectName && (
                                         <div className="invalid-feedback">
@@ -79,26 +98,17 @@ class AddProject extends Component {
                                 <div className="form-group">
                                     <input
                                         type="text"
-                                        className={classnames(
-                                            "form-control form-control-lg",
-                                            {
-                                                "is-invalid":
-                                                    errors.projectIdentifier,
-                                            }
-                                        )}
+                                        className="form-control form-control-lg"
                                         placeholder="Unique Project ID"
                                         name="projectIdentifier"
                                         value={this.state.projectIdentifier}
-                                        onChange={this.handleChange}
+                                        onChange={this.onChange}
+                                        disabled
                                     />
-                                    {errors.projectIdentifier && (
-                                        <div className="invalid-feedback">
-                                            {errors.projectIdentifier}
-                                        </div>
-                                    )}
                                 </div>
                                 <div className="form-group">
                                     <textarea
+                                        className="form-control form-control-lg"
                                         className={classnames(
                                             "form-control form-control-lg",
                                             {
@@ -106,17 +116,16 @@ class AddProject extends Component {
                                                     errors.projectDescription,
                                             }
                                         )}
-                                        placeholder="Project Description"
                                         name="projectDescription"
                                         value={this.state.projectDescription}
-                                        onChange={this.handleChange}
+                                        onChange={this.onChange}
                                     ></textarea>
-                                    {errors.projectDescription && (
-                                        <div className="invalid-feedback">
-                                            {errors.projectDescription}
-                                        </div>
-                                    )}
                                 </div>
+                                {errors.projectName && (
+                                    <div className="invalid-feedback">
+                                        {errors.projectDescription}
+                                    </div>
+                                )}
                                 <h6>Start Date</h6>
                                 <div className="form-group">
                                     <input
@@ -124,7 +133,7 @@ class AddProject extends Component {
                                         className="form-control form-control-lg"
                                         name="startDate"
                                         value={this.state.startDate}
-                                        onChange={this.handleChange}
+                                        onChange={this.onChange}
                                     />
                                 </div>
                                 <h6>Estimated End Date</h6>
@@ -134,10 +143,9 @@ class AddProject extends Component {
                                         className="form-control form-control-lg"
                                         name="endDate"
                                         value={this.state.endDate}
-                                        onChange={this.handleChange}
+                                        onChange={this.onChange}
                                     />
                                 </div>
-
                                 <input
                                     type="submit"
                                     className="btn btn-primary btn-block mt-4"
@@ -151,12 +159,18 @@ class AddProject extends Component {
     }
 }
 
-AddProject.propTypes = {
-    createProject: PropTypes.func.isRequired,
-    errors: PropTypes.object.isRequired,
+UpdateProject.propTypes = {
+    getProject: propTypes.func.isRequired,
+    project: propTypes.object.isRequired,
+    createProject: propTypes.func.isRequired,
+    errors: propTypes.object.isRequired,
 };
 
-const mapStatetoErrors = (state) => ({
+const mapStateToProps = (state) => ({
+    project: state.project.project,
     errors: state.errors,
 });
-export default connect(mapStatetoErrors, { createProject })(AddProject);
+
+export default connect(mapStateToProps, { getProjectById, createProject })(
+    UpdateProject
+);
