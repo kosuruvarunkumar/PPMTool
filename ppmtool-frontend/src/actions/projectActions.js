@@ -10,10 +10,7 @@ import {
 
 export const createProject = (project, history) => async (dispatch) => {
     try {
-        const res = await axios.post(
-            "http://localhost:8080/api/project",
-            project
-        );
+        const res = await axios.post("api/project", project);
         history.push("/dashboard");
         dispatch({
             type: GET_ERRORS,
@@ -28,7 +25,7 @@ export const createProject = (project, history) => async (dispatch) => {
 };
 
 export const getProjects = () => async (dispatch) => {
-    const res = await axios.get("http://localhost:8080/api/project/");
+    const res = await axios.get("api/project/");
     dispatch({
         type: GET_PROJECTS,
         payload: res.data,
@@ -39,9 +36,7 @@ export const getProjectById = (projectIdentifier, history) => async (
     dispatch
 ) => {
     try {
-        const res = await axios.get(
-            `http://localhost:8080/api/project/${projectIdentifier}`
-        );
+        const res = await axios.get(`api/project/${projectIdentifier}`);
         dispatch({
             type: GET_PROJECT,
             payload: res.data,
@@ -53,9 +48,7 @@ export const getProjectById = (projectIdentifier, history) => async (
 
 export const deleteProjectById = (projectIdentifier) => async (dispatch) => {
     if (window.confirm("Are you sure? This action is irreversible.")) {
-        await axios.delete(
-            `http://localhost:8080/api/project/${projectIdentifier}`
-        );
+        await axios.delete(`api/project/${projectIdentifier}`);
         dispatch({
             type: DELETE_PROJECT,
             payload: projectIdentifier,
