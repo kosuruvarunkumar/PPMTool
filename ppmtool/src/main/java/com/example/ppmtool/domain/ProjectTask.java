@@ -17,22 +17,21 @@ public class ProjectTask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(updatable = false)
-    private String projectSequence;
+    @Column(updatable = false, unique = true)
+    private String projectTaskSequence;
     @NotBlank(message = "Please include a project summary")
     private String summary;
     private String acceptanceCriteria;
     private String status;
     private Integer priority;
     private Date dueDate;
-    //TODO: ManyToOne relationship with Backlog
     @Column(updatable = false)
     private String projectIdentifier;
     @JsonFormat(pattern = "yyyy-mm-dd")
     private Date createdAt;
     @JsonFormat(pattern = "yyyy-mm-dd")
     private Date updatedAt;
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="backlogID", updatable = false, nullable = false)
     @JsonIgnore
     private Backlog backlog;
@@ -58,12 +57,12 @@ public class ProjectTask {
         this.id = id;
     }
 
-    public String getProjectSequence() {
-        return projectSequence;
+    public String getProjectTaskSequence() {
+        return projectTaskSequence;
     }
 
-    public void setProjectSequence(String projectSequence) {
-        this.projectSequence = projectSequence;
+    public void setProjectTaskSequence(String projectTaskSequence) {
+        this.projectTaskSequence = projectTaskSequence;
     }
 
     public String getSummary() {
@@ -142,7 +141,7 @@ public class ProjectTask {
     public String toString() {
         return "ProjectTask{" +
                 "id=" + id +
-                ", projectSequence='" + projectSequence + '\'' +
+                ", projectTaskSequence='" + projectTaskSequence + '\'' +
                 ", summary='" + summary + '\'' +
                 ", acceptanceCriteria='" + acceptanceCriteria + '\'' +
                 ", status='" + status + '\'' +
