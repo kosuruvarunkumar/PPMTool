@@ -108,7 +108,6 @@ class UpdateProject extends Component {
                                 </div>
                                 <div className="form-group">
                                     <textarea
-                                        className="form-control form-control-lg"
                                         className={classnames(
                                             "form-control form-control-lg",
                                             {
